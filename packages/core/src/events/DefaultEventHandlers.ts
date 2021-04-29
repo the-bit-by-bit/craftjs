@@ -1,8 +1,10 @@
+import mapValues from 'lodash/mapValues';
+
 import { CoreEventHandlers } from './CoreEventHandlers';
 import { createShadow } from './createShadow';
 
-import { Indicator, NodeId, NodeTree, Node } from '../interfaces';
-import { defineEventListener, CraftDOMEvent } from '../utils/Handlers';
+import { Indicator, Node, NodeId, NodeTree } from '../interfaces';
+import { CraftDOMEvent, defineEventListener } from '../utils/Handlers';
 
 export * from '../utils/Handlers';
 
@@ -169,12 +171,30 @@ export class DefaultEventHandlers extends CoreEventHandlers {
           defineEventListener('dragend', (e: CraftDOMEvent<DragEvent>) => {
             e.craft.stopPropagation();
             const onDropElement = (draggedElement, placement) => {
-              const index =
-                placement.index + (placement.where === 'after' ? 1 : 0);
+              const x = e.clientX;
+              const y = e.clientY;
+
+              // HACK: augment dropped node with cursor position at the time of dropping
+              const nodesWithPositionSet = {
+                ...draggedElement,
+                nodes: mapValues(draggedElement.nodes, (node) => ({
+                  ...node,
+                  data: {
+                    ...node.data,
+                    props: {
+                      ...node.data.props,
+                      x,
+                      y,
+                    },
+                  },
+                })),
+              };
+
               this.store.actions.addNodeTree(
-                draggedElement,
+                nodesWithPositionSet,
                 placement.parent.id,
-                index
+                // HACK: make each new element last, so it appears above the rest
+                Infinity
               );
             };
             this.dropElement(onDropElement);
