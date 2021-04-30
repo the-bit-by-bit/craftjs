@@ -1,3 +1,4 @@
+import { ROOT_NODE } from '@craftjs/utils';
 import mapValues from 'lodash/mapValues';
 
 import { CoreEventHandlers } from './CoreEventHandlers';
@@ -192,7 +193,7 @@ export class DefaultEventHandlers extends CoreEventHandlers {
 
               this.store.actions.addNodeTree(
                 nodesWithPositionSet,
-                placement.parent.id,
+                ROOT_NODE,
                 // HACK: make each new element last, so it appears above the rest
                 Infinity
               );
