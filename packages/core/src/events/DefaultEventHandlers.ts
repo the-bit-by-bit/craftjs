@@ -172,8 +172,35 @@ export class DefaultEventHandlers extends CoreEventHandlers {
           defineEventListener('dragend', (e: CraftDOMEvent<DragEvent>) => {
             e.craft.stopPropagation();
             const onDropElement = (draggedElement, placement) => {
-              const x = e.clientX;
-              const y = e.clientY;
+              const { position, parentId } = (function () {
+                const clientX = e.clientX;
+                const clientY = e.clientY;
+
+                console.log(placement);
+                // HACK: if dropped into GroupingContainer, then add it there, otherwise the root
+                if (placement.parent.data.name === 'GroupingContainer') {
+                  const {
+                    x: elementX,
+                    y: elementY,
+                  } = placement.parent.dom.getBoundingClientRect();
+                  console.log(elementX, elementY, clientX, clientY);
+                  return {
+                    parentId: placement.parent.id,
+                    position: {
+                      x: clientX - elementX,
+                      y: clientY - elementY,
+                    },
+                  };
+                }
+
+                return {
+                  parentId: ROOT_NODE,
+                  position: {
+                    x: clientX,
+                    y: clientY,
+                  },
+                };
+              })();
 
               // HACK: augment dropped node with cursor position at the time of dropping
               const nodesWithPositionSet = {
@@ -184,8 +211,7 @@ export class DefaultEventHandlers extends CoreEventHandlers {
                     ...node.data,
                     props: {
                       ...node.data.props,
-                      x,
-                      y,
+                      ...position,
                     },
                   },
                 })),
@@ -193,7 +219,7 @@ export class DefaultEventHandlers extends CoreEventHandlers {
 
               this.store.actions.addNodeTree(
                 nodesWithPositionSet,
-                ROOT_NODE,
+                parentId,
                 // HACK: make each new element last, so it appears above the rest
                 Infinity
               );
