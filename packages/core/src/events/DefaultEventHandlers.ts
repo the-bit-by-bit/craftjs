@@ -11,6 +11,26 @@ export * from '../utils/Handlers';
 
 type DraggedElement = NodeId | NodeTree;
 
+const GROUPING_CONTAINER_NAME = 'GroupingContainer';
+
+/**
+ * Checks node for being a Grouping Container and searches through its
+ * ancestors if it's not, returning the first one found or the root.
+ */
+const getClosestAncestorGroupingContainer = (allNodes, node) => {
+  if (node.data.name === GROUPING_CONTAINER_NAME) {
+    return node;
+  }
+
+  const parent = allNodes.find((n) => n.data.nodes.includes(node.id));
+
+  if (!parent) {
+    return allNodes.find((n) => n.id === ROOT_NODE);
+  }
+
+  return getClosestParentGroupingContainer(allNodes, parent);
+};
+
 /**
  * Specifies Editor-wide event handlers and connectors
  */
@@ -172,32 +192,27 @@ export class DefaultEventHandlers extends CoreEventHandlers {
           defineEventListener('dragend', (e: CraftDOMEvent<DragEvent>) => {
             e.craft.stopPropagation();
             const onDropElement = (draggedElement, placement) => {
+              const allNodes = Object.values(this.store.getState().nodes);
+              const ancestorGroupingContainer = getClosestAncestorGroupingContainer(
+                allNodes,
+                placement.parent
+              );
+
               const { position, parentId } = (function () {
                 const clientX = e.clientX;
                 const clientY = e.clientY;
 
-                console.log(placement);
-                // HACK: if dropped into GroupingContainer, then add it there, otherwise the root
-                if (placement.parent.data.name === 'GroupingContainer') {
-                  const {
-                    x: elementX,
-                    y: elementY,
-                  } = placement.parent.dom.getBoundingClientRect();
-                  console.log(elementX, elementY, clientX, clientY);
-                  return {
-                    parentId: placement.parent.id,
-                    position: {
-                      x: clientX - elementX,
-                      y: clientY - elementY,
-                    },
-                  };
-                }
+                // Add node to the closest ancestor Grouping Container
+                const {
+                  x: elementX,
+                  y: elementY,
+                } = ancestorGroupingContainer.dom.getBoundingClientRect();
 
                 return {
-                  parentId: ROOT_NODE,
+                  parentId: ancestorGroupingContainer.id,
                   position: {
-                    x: clientX,
-                    y: clientY,
+                    x: clientX - elementX,
+                    y: clientY - elementY,
                   },
                 };
               })();
