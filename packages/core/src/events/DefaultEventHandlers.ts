@@ -11,14 +11,15 @@ export * from '../utils/Handlers';
 
 type DraggedElement = NodeId | NodeTree;
 
-const GROUPING_CONTAINER_NAME = 'GroupingContainer';
+const canvasType = (type: string) =>
+  type === 'GroupingContainer' || type === 'Display';
 
 /**
  * Checks node for being a Grouping Container and searches through its
  * ancestors if it's not, returning the first one found or the root.
  */
 const getClosestAncestorGroupingContainer = (allNodes, node) => {
-  if (node.data.name === GROUPING_CONTAINER_NAME) {
+  if (canvasType(node.data.name)) {
     return node;
   }
 
