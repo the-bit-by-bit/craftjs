@@ -2,6 +2,7 @@ import { useEditor } from '@craftjs/core';
 import React from 'react';
 import styled from 'styled-components';
 
+import { EditableLayerName } from './EditableLayerName';
 import Arrow from './svg/arrow.svg';
 import Eye from './svg/eye.svg';
 import Linked from './svg/linked.svg';
@@ -88,6 +89,10 @@ const TopLevelIndicator = styled.div`
 
 const Name = styled.div`
   cursor: default;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 `;
 
 export const DefaultLayerHeader: React.FC = () => {
@@ -104,16 +109,11 @@ export const DefaultLayerHeader: React.FC = () => {
     };
   });
 
-  const { hidden, actions, selected, topLevel, displayName } = useEditor(
-    (state, query) => ({
-      hidden: state.nodes[id] && state.nodes[id].data.hidden,
-      selected: state.events.selected === id,
-      topLevel: query.node(id).isTopLevelCanvas(),
-      displayName:
-        (state.nodes[id] && state.nodes[id].data.name) ||
-        state.nodes[id].data.displayName,
-    })
-  );
+  const { hidden, actions, selected, topLevel } = useEditor((state, query) => ({
+    hidden: state.nodes[id] && state.nodes[id].data.hidden,
+    selected: state.events.selected === id,
+    topLevel: query.node(id).isTopLevelCanvas(),
+  }));
 
   // Removing ref={drag} from StyledDiv and setting attribute in DefaultEventHandlers block dragging layers functionality.
   // Drag is getting from connectors.
@@ -136,8 +136,9 @@ export const DefaultLayerHeader: React.FC = () => {
               <Linked />
             </TopLevelIndicator>
           ) : null}
-
-          <Name className="layer-name s">{displayName}</Name>
+          <Name className="layer-name s">
+            <EditableLayerName />
+          </Name>
           <div>
             {children && children.length ? (
               <Expand expanded={expanded}>
