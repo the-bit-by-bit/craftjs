@@ -142,8 +142,8 @@ export class DefaultEventHandlers extends CoreEventHandlers {
           if (!this.store.query.node(id).isDraggable()) {
             return () => {};
           }
-
-          el.setAttribute('draggable', 'true');
+          // Removing this and drag connector from DefaultLayerHeader block dragging layers functionality
+          // el.setAttribute('draggable', 'true');
           return () => el.setAttribute('draggable', 'false');
         },
         events: [

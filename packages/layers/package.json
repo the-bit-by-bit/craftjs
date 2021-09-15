@@ -31,15 +31,15 @@
   },
   "homepage": "https://github.com/prevwong/craft.js/",
   "dependencies": {
-    "@craftjs/utils": "^0.1.0-beta.17",
-    "styled-components": "^4.2.1"
+    "@craftjs/utils": "0.1.0-beta.17",
+    "styled-components": "4.2.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.4",
-    "@svgr/rollup": "^4.3.3"
+    "@babel/core": "7.7.4",
+    "@svgr/rollup": "4.3.3"
   },
   "peerDependencies": {
-    "@craftjs/core": "^0.1.0-alpha.1",
-    "react": "^16.8.0"
+    "@craftjs/core": "0.1.0-alpha.1",
+    "react": "16.8.0"
   }
 }
