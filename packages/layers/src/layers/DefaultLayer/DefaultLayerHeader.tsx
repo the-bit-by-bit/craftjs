@@ -13,12 +13,13 @@ const StyledDiv = styled.div<{ depth: number; selected: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 4px 10px;
+  padding: 4px 15px;
   background: ${(props) => (props.selected ? '#2680eb' : 'transparent')};
   color: ${(props) => (props.selected ? '#fff' : 'inherit')};
   svg {
     fill: ${(props) => (props.selected ? '#fff' : '#808184')};
-    margin-top: 2px;
+    margin-bottom: 2px;
+    vertical-align: baseline;
   }
   .inner {
     flex: 1;
@@ -41,13 +42,10 @@ const StyledDiv = styled.div<{ depth: number; selected: boolean }>`
 
 const Expand = styled.a<{ expanded: boolean }>`
   width: 8px;
-  height: 8px;
   display: block;
-  transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
   transform: rotate(${(props) => (props.expanded ? 180 : 0)}deg);
   opacity: 0.7;
   cursor: pointer;
-  transform-origin: 60% center;
 `;
 
 const Hide = styled.a<{ selected: boolean; isHidden: boolean }>`
@@ -89,13 +87,21 @@ const TopLevelIndicator = styled.div`
   }
 `;
 
+const Name = styled.div`
+  cursor: default;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+`;
+
 export const DefaultLayerHeader: React.FC = () => {
   const {
     id,
     depth,
     expanded,
     children,
-    connectors: { drag, layerHeader },
+    connectors: { layerHeader },
     actions: { toggleLayer },
   } = useLayer((layer) => {
     return {
@@ -109,12 +115,17 @@ export const DefaultLayerHeader: React.FC = () => {
     topLevel: query.node(id).isTopLevelCanvas(),
   }));
 
+  // Removing ref={drag} from StyledDiv and setting attribute in DefaultEventHandlers block dragging layers functionality.
+  // Drag is getting from connectors.
   return (
-    <StyledDiv selected={selected} ref={drag} depth={depth}>
+    <StyledDiv selected={selected} depth={depth} onClick={() => toggleLayer()}>
       <Hide
         selected={selected}
         isHidden={hidden}
-        onClick={() => actions.setHidden(id, !hidden)}
+        onClick={(event) => {
+          event.stopPropagation();
+          actions.setHidden(id, !hidden);
+        }}
       >
         <Eye />
       </Hide>
@@ -125,13 +136,12 @@ export const DefaultLayerHeader: React.FC = () => {
               <Linked />
             </TopLevelIndicator>
           ) : null}
-
-          <div className="layer-name s">
+          <Name className="layer-name s">
             <EditableLayerName />
-          </div>
+          </Name>
           <div>
             {children && children.length ? (
-              <Expand expanded={expanded} onMouseDown={() => toggleLayer()}>
+              <Expand expanded={expanded}>
                 <Arrow />
               </Expand>
             ) : null}

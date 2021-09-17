@@ -9,9 +9,8 @@ export const EditableLayerName = () => {
 
   const { displayName, actions } = useEditor((state) => ({
     displayName:
-      state.nodes[id] && state.nodes[id].data.custom.displayName
-        ? state.nodes[id].data.custom.displayName
-        : state.nodes[id].data.displayName,
+      (state.nodes[id] && state.nodes[id].data.name) ||
+      state.nodes[id].data.displayName,
     hidden: state.nodes[id] && state.nodes[id].data.hidden,
   }));
 
@@ -47,10 +46,7 @@ export const EditableLayerName = () => {
           (custom) => (custom.displayName = e.target.value)
         );
       }}
-      tagName="h2"
-      onDoubleClick={() => {
-        if (!editingName) setEditingName(true);
-      }}
+      tagName="div"
     />
   );
 };
