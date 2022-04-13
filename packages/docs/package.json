@@ -1,6 +1,6 @@
 {
   "name": "@thebitbybit/docs",
-  "version": "0.1.0-beta.17-bbb",
+  "version": "0.1.0-beta.17-bbb.1",
   "private": true,
   "scripts": {
     "start": "docusaurus start",
