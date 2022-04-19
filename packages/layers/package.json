@@ -1,5 +1,5 @@
 {
-  "name": "@craftjs/layers",
+  "name": "@thebitbybit/craftjs-layers",
   "description": "A Photoshop-like layers panel for your page editor",
   "keywords": [
     "wysiwyg",
@@ -11,7 +11,7 @@
     "web-builder",
     "react"
   ],
-  "version": "0.1.0-beta.17",
+  "version": "0.1.0-beta.17-bbb.1",
   "author": "Prev Wong <prevwong@gmail.com>",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/prevwong/craft.js/",
   "dependencies": {
-    "@craftjs/utils": "0.1.0-beta.17",
+    "@craftjs/utils": "npm:@thebitbybit/craftjs-utils@0.1.0-beta.17-bbb.1",
     "styled-components": "4.2.1",
     "react-contenteditable": "3.3.2"
   },
@@ -40,7 +40,7 @@
     "@svgr/rollup": "4.3.3"
   },
   "peerDependencies": {
-    "@craftjs/core": "0.1.0-alpha.1",
+    "@craftjs/core": "npm:@thebitbybit/craftjs-core@0.1.0-beta.17-bbb.1",
     "react": "16.8.0"
   }
 }
